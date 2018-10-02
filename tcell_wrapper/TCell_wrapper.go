@@ -14,15 +14,22 @@ var (
 /* PUBLIC SHIT BELOW */
 
 const (
-	WHITE   = 0
-	BLACK   = 1
-	RED     = 2
-	GREEN   = 3
-	YELLOW  = 4
-	BLUE    = 5
-	MAGENTA = 6
-	CYAN    = 7
-	BEIGE   = 8
+	BLACK        = 0
+	DARK_RED     = 1
+	DARK_GREEN   = 2
+	DARK_YELLOW  = 3
+	DARK_BLUE    = 4
+	DARK_MAGENTA = 5
+	DARK_CYAN    = 6
+	BEIGE        = 7
+	DARK_GRAY    = 8
+	RED          = 9
+	GREEN        = 10
+	YELLOW       = 11
+	BLUE         = 12
+	MAGENTA      = 13
+	CYAN         = 14
+	WHITE        = 15
 )
 
 func Init_console() {
@@ -65,7 +72,6 @@ func SetColor(fg int, bg int) {
 	bg_color = tcell.Color(bg)
 	style = style.Foreground(fg_color).Background(bg_color)
 }
-
 
 func SetFgColor(fg int) {
 	fg_color = tcell.Color(fg)
