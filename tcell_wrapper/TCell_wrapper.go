@@ -58,6 +58,10 @@ func Flush_console() {
 	screen.Show()
 }
 
+func GetConsoleSize() (int, int) {
+	return screen.Size()
+}
+
 //
 //
 //func Run_event_listener() { // should be run as go func() {}()
