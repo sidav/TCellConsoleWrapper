@@ -116,6 +116,14 @@ func ReadKey() string {
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
 		switch ev.Key() {
+		case tcell.KeyUp:
+			return "UP"
+		case tcell.KeyRight:
+			return "RIGHT"
+		case tcell.KeyDown:
+			return "DOWN"
+		case tcell.KeyLeft:
+			return "LEFT"
 		case tcell.KeyEscape:
 			return "ESCAPE"
 		case tcell.KeyEnter:
