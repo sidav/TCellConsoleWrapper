@@ -9,6 +9,9 @@ var (
 	bg_color = tcell.ColorBlack
 	style    tcell.Style
 	screen   tcell.Screen
+	CONSOLE_WIDTH = 80
+	CONSOLE_HEIGHT = 25
+	wasResized = false
 )
 
 /* PUBLIC SHIT BELOW */
@@ -44,6 +47,7 @@ func Init_console() {
 	}
 	style = tcell.StyleDefault.Foreground(fg_color).Background(bg_color)
 	screen.SetStyle(style)
+	CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
 }
 
 func Close_console() { //should be deferred!
@@ -60,6 +64,14 @@ func Flush_console() {
 
 func GetConsoleSize() (int, int) {
 	return screen.Size()
+}
+
+func WasResized() bool {
+	if wasResized {
+		wasResized = false
+		return true
+	}
+	return false
 }
 
 //
@@ -135,6 +147,8 @@ func ReadKey() string {
 		}
 	case *tcell.EventResize:
 		screen.Sync()
+		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
+		wasResized = true 
 		return "NONKEY_SYNC_EVENT"
 	}
 	return "KEY_EMPTY_WTF_HAPPENED"
