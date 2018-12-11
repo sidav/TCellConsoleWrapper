@@ -148,7 +148,7 @@ func ReadKey() string {
 	case *tcell.EventResize:
 		screen.Sync()
 		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
-		wasResized = true 
+		wasResized = true
 		return "NONKEY_SYNC_EVENT"
 	}
 	return "KEY_EMPTY_WTF_HAPPENED"
