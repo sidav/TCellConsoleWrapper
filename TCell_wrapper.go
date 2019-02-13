@@ -153,3 +153,13 @@ func ReadKey() string {
 	}
 	return "KEY_EMPTY_WTF_HAPPENED"
 }
+
+func PrintCharactersTable() {
+	for x:=0; x < CONSOLE_WIDTH; x++ {
+		for y:=0; y < CONSOLE_HEIGHT; y++ {
+			PutChar(rune(x + y*CONSOLE_WIDTH), x, y)
+		}
+	}
+	Flush_console()
+	ReadKey()
+}
