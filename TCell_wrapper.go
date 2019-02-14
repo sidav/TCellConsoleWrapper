@@ -1,8 +1,8 @@
-package main
+package TCellWrapper
 
 import (
 	"github.com/gdamore/tcell"
-	"strconv"
+	"time"
 )
 
 var (
@@ -50,7 +50,7 @@ func Init_console() {
 	style = tcell.StyleDefault.Foreground(fg_color).Background(bg_color)
 	screen.SetStyle(style)
 	CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
-	evCh = make(chan tcell.Event)
+	evCh = make(chan tcell.Event, 1)
 	go startAsyncEventListener()
 }
 
@@ -118,8 +118,9 @@ func PutString(s string, x, y int) {
 //
 //
 
-func ReadKey() string {
+func AwaitAndReadKey() string {
 	for len(evCh) == 0 {
+		time.Sleep(1*time.Millisecond)
 	}
 	ev := <-evCh
 	switch ev := ev.(type) {
@@ -151,9 +152,9 @@ func ReadKey() string {
 	return "KEY_EMPTY_WTF_HAPPENED"
 }
 
-func ReadKeyNoWait() string {
+func ReadKey() string {
 	if len(evCh) == 0 {
-		return "wololo"
+		return "NOTHING"
 	}
 	ev := <-evCh
 	switch ev := ev.(type) {
@@ -186,65 +187,13 @@ func ReadKeyNoWait() string {
 }
 
 func startAsyncEventListener() {
-	i:= 0
 	for {
-		i++
-		PutString(strconv.Itoa(i) + " <-" + strconv.Itoa(len(evCh)), 0, 3)
-		Flush_console()
-		//select {
-		//case <-g.quitq:
-		//	return
-		//default:
-		//}
 		ev := screen.PollEvent()
-		if ev == nil {
-			continue
-		}
-		//if ev == nil {
-		//	return
-		//}
 		select {
-		case evCh<-ev:
+		case evCh <- ev:
 		default:
-			//select {
-			//case <-g.quitq:
-			//	return
-			//case evCh <- ev:
-			//}
 		}
 	}
-	//curtime := time.Now()
-	//for {
-	//
-	//	lastKeyPressed = ""
-	//	ev := screen.PollEvent()
-	//	switch ev := ev.(type) {
-	//	case *tcell.EventKey:
-	//		switch ev.Key() {
-	//		case tcell.KeyUp:
-	//			lastKeyPressed = "UP"
-	//		case tcell.KeyRight:
-	//			lastKeyPressed = "RIGHT"
-	//		case tcell.KeyDown:
-	//			lastKeyPressed = "DOWN"
-	//		case tcell.KeyLeft:
-	//			lastKeyPressed = "LEFT"
-	//		case tcell.KeyEscape:
-	//			lastKeyPressed = "ESCAPE"
-	//		case tcell.KeyEnter:
-	//			lastKeyPressed = "ENTER"
-	//		case tcell.KeyTab:
-	//			lastKeyPressed = "TAB"
-	//		default:
-	//			lastKeyPressed = string(ev.Rune())
-	//		}
-	//	case *tcell.EventResize:
-	//		screen.Sync()
-	//		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
-	//		wasResized = true
-	//	}
-	//	// lastKeyPressed = "KEY_EMPTY_WTF_HAPPENED"
-	//}
 }
 
 func PrintCharactersTable() {

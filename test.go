@@ -1,4 +1,4 @@
-package main
+package TCellWrapper
 
 import "strconv"
 
@@ -33,11 +33,18 @@ func main() {
 	Init_console()
 	Clear_console()
 	defer Close_console()
-	for i:=0;i<100000;i++{
+	testkey := ReadKey()
+	i := 0
+	for testkey != "ESCAPE" {
 		PutString(strconv.Itoa(i), 0, 0)
 		// PutString(strconv.Itoa(i), 0, 0)
 		Flush_console()
-		PutString(ReadKeyNoWait(), 0, 1)
+		if testkey != "NOTHING" {
+			PutString(testkey+ "                 ", 0, 1)
+			Flush_console()
+		}
+		testkey = ReadKey()
+		i += 1
 	}
 }
 
