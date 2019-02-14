@@ -1,4 +1,4 @@
-package TCellWrapper
+package tcell_wrapper
 
 import (
 	"github.com/gdamore/tcell"
