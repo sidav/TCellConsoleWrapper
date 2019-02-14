@@ -1,7 +1,5 @@
 package tcell_wrapper
 
-import "strconv"
-
 //
 ////func makebox(s tcell.Screen) {
 ////	w, h := s.Size()
@@ -29,24 +27,24 @@ import "strconv"
 ////	}
 ////}
 
-func main() {
-	Init_console()
-	Clear_console()
-	defer Close_console()
-	testkey := ReadKey()
-	i := 0
-	for testkey != "ESCAPE" {
-		PutString(strconv.Itoa(i), 0, 0)
-		// PutString(strconv.Itoa(i), 0, 0)
-		Flush_console()
-		if testkey != "NOTHING" {
-			PutString(testkey+ "                 ", 0, 1)
-			Flush_console()
-		}
-		testkey = ReadKey()
-		i += 1
-	}
-}
+//func main() {
+//	Init_console()
+//	Clear_console()
+//	defer Close_console()
+//	testkey := ReadKey()
+//	i := 0
+//	for testkey != "ESCAPE" {
+//		PutString(strconv.Itoa(i), 0, 0)
+//		// PutString(strconv.Itoa(i), 0, 0)
+//		Flush_console()
+//		if testkey != "NOTHING" {
+//			PutString(testkey+ "                 ", 0, 1)
+//			Flush_console()
+//		}
+//		testkey = ReadKey()
+//		i += 1
+//	}
+//}
 
 //func main() {
 //

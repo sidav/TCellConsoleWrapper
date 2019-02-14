@@ -118,7 +118,7 @@ func PutString(s string, x, y int) {
 //
 //
 
-func AwaitAndReadKey() string {
+func ReadKey() string {
 	for len(evCh) == 0 {
 		time.Sleep(1*time.Millisecond)
 	}
@@ -152,7 +152,7 @@ func AwaitAndReadKey() string {
 	return "KEY_EMPTY_WTF_HAPPENED"
 }
 
-func ReadKey() string {
+func ReadKeyAsync() string {
 	if len(evCh) == 0 {
 		return "NOTHING"
 	}
