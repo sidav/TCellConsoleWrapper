@@ -1,17 +1,19 @@
-package tcell_wrapper
+package main
 
 import (
 	"github.com/gdamore/tcell"
+	"strconv"
 )
 
 var (
-	fg_color = tcell.ColorWhite
-	bg_color = tcell.ColorBlack
-	style    tcell.Style
-	screen   tcell.Screen
-	CONSOLE_WIDTH = 80
+	fg_color       = tcell.ColorWhite
+	bg_color       = tcell.ColorBlack
+	style          tcell.Style
+	screen         tcell.Screen
+	CONSOLE_WIDTH  = 80
 	CONSOLE_HEIGHT = 25
-	wasResized = false
+	wasResized     = false
+	evCh           chan tcell.Event
 )
 
 /* PUBLIC SHIT BELOW */
@@ -48,6 +50,8 @@ func Init_console() {
 	style = tcell.StyleDefault.Foreground(fg_color).Background(bg_color)
 	screen.SetStyle(style)
 	CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
+	evCh = make(chan tcell.Event)
+	go startAsyncEventListener()
 }
 
 func Close_console() { //should be deferred!
@@ -113,18 +117,11 @@ func PutString(s string, x, y int) {
 //
 //
 //
-//func Await_keypress() rune {
-//	for {
-//		ev := <-event_queue
-//		if ev.Type == termbox.EventKey {
-//			return ev.Ch
-//		}
-//	}
-//
-//}
-//
+
 func ReadKey() string {
-	ev := screen.PollEvent()
+	for len(evCh) == 0 {
+	}
+	ev := <-evCh
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
 		switch ev.Key() {
@@ -154,10 +151,106 @@ func ReadKey() string {
 	return "KEY_EMPTY_WTF_HAPPENED"
 }
 
+func ReadKeyNoWait() string {
+	if len(evCh) == 0 {
+		return "wololo"
+	}
+	ev := <-evCh
+	switch ev := ev.(type) {
+	case *tcell.EventKey:
+		switch ev.Key() {
+		case tcell.KeyUp:
+			return "UP"
+		case tcell.KeyRight:
+			return "RIGHT"
+		case tcell.KeyDown:
+			return "DOWN"
+		case tcell.KeyLeft:
+			return "LEFT"
+		case tcell.KeyEscape:
+			return "ESCAPE"
+		case tcell.KeyEnter:
+			return "ENTER"
+		case tcell.KeyTab:
+			return "TAB"
+		default:
+			return string(ev.Rune())
+		}
+	case *tcell.EventResize:
+		screen.Sync()
+		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
+		wasResized = true
+		return "NONKEY_SYNC_EVENT"
+	}
+	return "KEY_EMPTY_WTF_HAPPENED"
+}
+
+func startAsyncEventListener() {
+	i:= 0
+	for {
+		i++
+		PutString(strconv.Itoa(i) + " <-" + strconv.Itoa(len(evCh)), 0, 3)
+		Flush_console()
+		//select {
+		//case <-g.quitq:
+		//	return
+		//default:
+		//}
+		ev := screen.PollEvent()
+		if ev == nil {
+			continue
+		}
+		//if ev == nil {
+		//	return
+		//}
+		select {
+		case evCh<-ev:
+		default:
+			//select {
+			//case <-g.quitq:
+			//	return
+			//case evCh <- ev:
+			//}
+		}
+	}
+	//curtime := time.Now()
+	//for {
+	//
+	//	lastKeyPressed = ""
+	//	ev := screen.PollEvent()
+	//	switch ev := ev.(type) {
+	//	case *tcell.EventKey:
+	//		switch ev.Key() {
+	//		case tcell.KeyUp:
+	//			lastKeyPressed = "UP"
+	//		case tcell.KeyRight:
+	//			lastKeyPressed = "RIGHT"
+	//		case tcell.KeyDown:
+	//			lastKeyPressed = "DOWN"
+	//		case tcell.KeyLeft:
+	//			lastKeyPressed = "LEFT"
+	//		case tcell.KeyEscape:
+	//			lastKeyPressed = "ESCAPE"
+	//		case tcell.KeyEnter:
+	//			lastKeyPressed = "ENTER"
+	//		case tcell.KeyTab:
+	//			lastKeyPressed = "TAB"
+	//		default:
+	//			lastKeyPressed = string(ev.Rune())
+	//		}
+	//	case *tcell.EventResize:
+	//		screen.Sync()
+	//		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
+	//		wasResized = true
+	//	}
+	//	// lastKeyPressed = "KEY_EMPTY_WTF_HAPPENED"
+	//}
+}
+
 func PrintCharactersTable() {
-	for x:=0; x < CONSOLE_WIDTH; x++ {
-		for y:=0; y < CONSOLE_HEIGHT; y++ {
-			PutChar(rune(x + y*CONSOLE_WIDTH), x, y)
+	for x := 0; x < CONSOLE_WIDTH; x++ {
+		for y := 0; y < CONSOLE_HEIGHT; y++ {
+			PutChar(rune(x+y*CONSOLE_WIDTH), x, y)
 		}
 	}
 	Flush_console()

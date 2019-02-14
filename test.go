@@ -1,9 +1,7 @@
-package tcell_wrapper
-//
-//import (
-//	// cw "TCellConsoleWrapper/tcell_wrapper"
-//	"fmt"
-//)
+package main
+
+import "strconv"
+
 //
 ////func makebox(s tcell.Screen) {
 ////	w, h := s.Size()
@@ -30,7 +28,19 @@ package tcell_wrapper
 ////		gl = glyphs[rand.Int()%len(glyphs)]
 ////	}
 ////}
-//
+
+func main() {
+	Init_console()
+	Clear_console()
+	defer Close_console()
+	for i:=0;i<100000;i++{
+		PutString(strconv.Itoa(i), 0, 0)
+		// PutString(strconv.Itoa(i), 0, 0)
+		Flush_console()
+		PutString(ReadKeyNoWait(), 0, 1)
+	}
+}
+
 //func main() {
 //
 //	Init_console()
