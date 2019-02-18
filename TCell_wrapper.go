@@ -119,35 +119,36 @@ func PutString(s string, x, y int) {
 //
 
 func ReadKey() string {
-	for len(evCh) == 0 {
-		time.Sleep(1*time.Millisecond)
-	}
-	ev := <-evCh
-	switch ev := ev.(type) {
-	case *tcell.EventKey:
-		switch ev.Key() {
-		case tcell.KeyUp:
-			return "UP"
-		case tcell.KeyRight:
-			return "RIGHT"
-		case tcell.KeyDown:
-			return "DOWN"
-		case tcell.KeyLeft:
-			return "LEFT"
-		case tcell.KeyEscape:
-			return "ESCAPE"
-		case tcell.KeyEnter:
-			return "ENTER"
-		case tcell.KeyTab:
-			return "TAB"
-		default:
-			return string(ev.Rune())
+	for {
+		for len(evCh) == 0 {
+			time.Sleep(1*time.Millisecond)
 		}
-	case *tcell.EventResize:
-		screen.Sync()
-		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
-		wasResized = true
-		return "NONKEY_SYNC_EVENT"
+		ev := <-evCh
+		switch ev := ev.(type) {
+		case *tcell.EventKey:
+			switch ev.Key() {
+			case tcell.KeyUp:
+				return "UP"
+			case tcell.KeyRight:
+				return "RIGHT"
+			case tcell.KeyDown:
+				return "DOWN"
+			case tcell.KeyLeft:
+				return "LEFT"
+			case tcell.KeyEscape:
+				return "ESCAPE"
+			case tcell.KeyEnter:
+				return "ENTER"
+			case tcell.KeyTab:
+				return "TAB"
+			default:
+				return string(ev.Rune())
+			}
+		case *tcell.EventResize:
+			screen.Sync()
+			CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
+			wasResized = true
+		}
 	}
 	return "KEY_EMPTY_WTF_HAPPENED"
 }
