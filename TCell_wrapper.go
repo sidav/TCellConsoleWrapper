@@ -175,6 +175,8 @@ func ReadKeyAsync() string {
 			return "ENTER"
 		case tcell.KeyTab:
 			return "TAB"
+		case tcell.KeyDelete:
+			return "DELETE"
 		default:
 			return string(ev.Rune())
 		}
