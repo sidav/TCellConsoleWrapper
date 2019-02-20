@@ -126,24 +126,7 @@ func ReadKey() string {
 		ev := <-evCh
 		switch ev := ev.(type) {
 		case *tcell.EventKey:
-			switch ev.Key() {
-			case tcell.KeyUp:
-				return "UP"
-			case tcell.KeyRight:
-				return "RIGHT"
-			case tcell.KeyDown:
-				return "DOWN"
-			case tcell.KeyLeft:
-				return "LEFT"
-			case tcell.KeyEscape:
-				return "ESCAPE"
-			case tcell.KeyEnter:
-				return "ENTER"
-			case tcell.KeyTab:
-				return "TAB"
-			default:
-				return string(ev.Rune())
-			}
+			return eventToKeyString(ev)
 		case *tcell.EventResize:
 			screen.Sync()
 			CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
@@ -160,26 +143,7 @@ func ReadKeyAsync() string {
 	ev := <-evCh
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
-		switch ev.Key() {
-		case tcell.KeyUp:
-			return "UP"
-		case tcell.KeyRight:
-			return "RIGHT"
-		case tcell.KeyDown:
-			return "DOWN"
-		case tcell.KeyLeft:
-			return "LEFT"
-		case tcell.KeyEscape:
-			return "ESCAPE"
-		case tcell.KeyEnter:
-			return "ENTER"
-		case tcell.KeyTab:
-			return "TAB"
-		case tcell.KeyDelete:
-			return "DELETE"
-		default:
-			return string(ev.Rune())
-		}
+		return eventToKeyString(ev)
 	case *tcell.EventResize:
 		screen.Sync()
 		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
@@ -187,6 +151,35 @@ func ReadKeyAsync() string {
 		return "NONKEY_SYNC_EVENT"
 	}
 	return "KEY_EMPTY_WTF_HAPPENED"
+}
+
+func eventToKeyString(ev *tcell.EventKey) string {
+	switch ev.Key() {
+	case tcell.KeyUp:
+		return "UP"
+	case tcell.KeyRight:
+		return "RIGHT"
+	case tcell.KeyDown:
+		return "DOWN"
+	case tcell.KeyLeft:
+		return "LEFT"
+	case tcell.KeyEscape:
+		return "ESCAPE"
+	case tcell.KeyEnter:
+		return "ENTER"
+	case tcell.KeyTab:
+		return "TAB"
+	case tcell.KeyDelete:
+		return "DELETE"
+	case tcell.KeyInsert:
+		return "INSERT"
+	case tcell.KeyEnd:
+		return "END"
+	case tcell.KeyHome:
+		return "HOME"
+	default:
+		return string(ev.Rune())
+	}
 }
 
 func startAsyncEventListener() {
