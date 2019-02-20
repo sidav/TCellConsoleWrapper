@@ -14,6 +14,7 @@ var (
 	CONSOLE_HEIGHT = 25
 	wasResized     = false
 	evCh           chan tcell.Event
+	flushesCounter int
 )
 
 /* PUBLIC SHIT BELOW */
@@ -63,6 +64,7 @@ func Clear_console() {
 }
 
 func Flush_console() {
+	flushesCounter++
 	screen.Show()
 }
 
@@ -190,6 +192,12 @@ func startAsyncEventListener() {
 		default:
 		}
 	}
+}
+
+func GetNumberOfRecentFlushes() int { // may be useful for searching rendering overkills and something
+	t := flushesCounter
+	flushesCounter = 0
+	return t
 }
 
 func PrintCharactersTable() {
