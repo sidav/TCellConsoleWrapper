@@ -16,10 +16,11 @@ var (
 	evCh           chan tcell.Event
 	flushesCounter int
 
-	mouseX, mouseY int
-	mouseButton    string
-	mouseHeld      bool
-	mouseMoved     bool
+	mouseX, mouseY             int
+	mouseVectorX, mouseVectorY int // for getting mouse coords changes
+	mouseButton                string
+	mouseHeld                  bool
+	mouseMoved                 bool
 )
 
 /* PUBLIC SHIT BELOW */
@@ -158,9 +159,8 @@ func ReadKeyAsync() string { // also reads mouse events... TODO: think of if sep
 		screen.Sync()
 		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
 		wasResized = true
-		return "NONKEY_SYNC_EVENT"
 	}
-	return "KEY_EMPTY_WTF_HAPPENED"
+	return "NON-KEY"
 }
 
 func eventToKeyString(ev *tcell.EventKey) string {
@@ -195,6 +195,8 @@ func eventToKeyString(ev *tcell.EventKey) string {
 func mouseEventWork(ev *tcell.EventMouse) {
 	mx, my := ev.Position()
 	if mouseX != mx || mouseY != my {
+		mouseVectorX = mx-mouseX
+		mouseVectorY = my-mouseY
 		mouseX, mouseY = mx, my
 		mouseMoved = true
 	}
@@ -228,6 +230,10 @@ func WasMouseMovedSinceLastEvent() bool {
 	t := mouseMoved
 	mouseMoved = false
 	return t
+}
+
+func GetMouseMovementVector() (int, int) {
+	return mouseVectorX, mouseVectorY
 }
 
 func startAsyncEventListener() {
