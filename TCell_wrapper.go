@@ -15,6 +15,11 @@ var (
 	wasResized     = false
 	evCh           chan tcell.Event
 	flushesCounter int
+
+	mouseX, mouseY int
+	mouseButton    string
+	mouseHeld      bool
+	mouseMoved     bool
 )
 
 /* PUBLIC SHIT BELOW */
@@ -48,6 +53,7 @@ func Init_console() {
 	if e = screen.Init(); e != nil {
 		panic(e)
 	}
+	screen.EnableMouse()
 	style = tcell.StyleDefault.Foreground(fg_color).Background(bg_color)
 	screen.SetStyle(style)
 	CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
@@ -123,7 +129,7 @@ func PutString(s string, x, y int) {
 func ReadKey() string {
 	for {
 		for len(evCh) == 0 {
-			time.Sleep(1*time.Millisecond)
+			time.Sleep(1 * time.Millisecond)
 		}
 		ev := <-evCh
 		switch ev := ev.(type) {
@@ -138,7 +144,7 @@ func ReadKey() string {
 	return "KEY_EMPTY_WTF_HAPPENED"
 }
 
-func ReadKeyAsync() string {
+func ReadKeyAsync() string { // also reads mouse events... TODO: think of if separate mouse events reader is needed.
 	if len(evCh) == 0 {
 		return "NOTHING"
 	}
@@ -146,6 +152,8 @@ func ReadKeyAsync() string {
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
 		return eventToKeyString(ev)
+	case *tcell.EventMouse:
+		mouseEventWork(ev)
 	case *tcell.EventResize:
 		screen.Sync()
 		CONSOLE_WIDTH, CONSOLE_HEIGHT = screen.Size()
@@ -182,6 +190,44 @@ func eventToKeyString(ev *tcell.EventKey) string {
 	default:
 		return string(ev.Rune())
 	}
+}
+
+func mouseEventWork(ev *tcell.EventMouse) {
+	mx, my := ev.Position()
+	if mouseX != mx || mouseY != my {
+		mouseX, mouseY = mx, my
+		mouseMoved = true
+	}
+	// PrevMouseButton = mouseButton
+	switch ev.Buttons() {
+	case tcell.ButtonNone:
+		mouseButton = "NONE"
+		mouseHeld = false
+	case tcell.Button1:
+		mouseHeld = mouseButton != "NONE"
+		mouseButton = "LEFT"
+	case tcell.Button2:
+		mouseHeld = mouseButton != "NONE"
+		mouseButton = "RIGHT"
+	}
+}
+
+func GetMouseCoords() (int, int) {
+	return mouseX, mouseY
+}
+
+func GetMouseButton() string {
+	return mouseButton
+}
+
+func IsMouseHeld() bool {
+	return mouseHeld
+}
+
+func WasMouseMovedSinceLastEvent() bool {
+	t := mouseMoved
+	mouseMoved = false
+	return t
 }
 
 func startAsyncEventListener() {

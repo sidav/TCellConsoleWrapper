@@ -31,18 +31,37 @@ package tcell_wrapper
 //	Init_console()
 //	Clear_console()
 //	defer Close_console()
-//	testkey := ReadKey()
-//	i := 0
-//	for testkey != "ESCAPE" {
-//		PutString(strconv.Itoa(i), 0, 0)
-//		// PutString(strconv.Itoa(i), 0, 0)
-//		Flush_console()
-//		if testkey != "NOTHING" {
-//			PutString(testkey+ "                 ", 0, 1)
-//			Flush_console()
+//
+//	// test mouse events
+//	// var origx, origy, tox, toy int
+//	moves := 0
+//	for ReadKeyAsync() != "ESCAPE" {
+//		// draw shit by mouse
+//		// Clear_console()
+//		//SetBgColor(WHITE)
+//		//for x := origx; x < tox; x++ {
+//		//	for y := origy; y < toy; y++ {
+//		//		PutChar(' ', x, y)
+//		//	}
+//		//}
+//
+//		if WasMouseMovedSinceLastEvent() {
+//			moves += 1
 //		}
-//		testkey = ReadKey()
-//		i += 1
+//
+//		PutString(strconv.Itoa(moves), 0, 0)
+//
+//		// moves--
+//
+//		//if mouseButton != "NONE" {
+//		//	if !mouseHeld {
+//		//		origx, origy = GetMouseCoords()
+//		//	}
+//		//	tox, toy = GetMouseCoords()
+//		//}
+//
+//		Flush_console()
+//
 //	}
 //}
 
