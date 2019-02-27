@@ -146,6 +146,9 @@ func ReadKey() string {
 }
 
 func ReadKeyAsync() string { // also reads mouse events... TODO: think of if separate mouse events reader is needed.
+
+	mouseHeld = mouseButton != "NONE"
+
 	if len(evCh) == 0 {
 		return "NOTHING"
 	}
@@ -204,12 +207,9 @@ func mouseEventWork(ev *tcell.EventMouse) {
 	switch ev.Buttons() {
 	case tcell.ButtonNone:
 		mouseButton = "NONE"
-		mouseHeld = false
 	case tcell.Button1:
-		mouseHeld = mouseButton != "NONE"
 		mouseButton = "LEFT"
 	case tcell.Button2:
-		mouseHeld = mouseButton != "NONE"
 		mouseButton = "RIGHT"
 	}
 }
