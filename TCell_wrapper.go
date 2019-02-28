@@ -66,8 +66,16 @@ func Close_console() { //should be deferred!
 	screen.Fini()
 }
 
-func Clear_console() {
+func PurgeConsole() { // dunno if this will be ever needed
 	screen.Clear()
+}
+
+func Clear_console() { // is suddenly less buggy than screen.Clear()
+	for x := 0; x < CONSOLE_WIDTH; x++ {
+		for y := 0; y < CONSOLE_HEIGHT; y++ {
+			PutChar(' ', x, y)
+		}
+	}
 }
 
 func Flush_console() {
